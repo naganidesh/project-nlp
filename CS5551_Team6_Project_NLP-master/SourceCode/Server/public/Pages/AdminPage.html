@@ -1,0 +1,266 @@
+<html ng-app="homeMongo" ng-controller="homeController" ng-init="init()">
+<head >
+    <title>Home Page</title>
+    <link href="../newStyle.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <script type="text/javascript" src="https://code.angularjs.org/1.1.1/angular.js"></script>
+    <script type="text/javascript" src="https://code.angularjs.org/1.1.1/angular-resource.js"></script>
+    <script type="text/javascript" src="https://code.angularjs.org/1.1.1/angular-sanitize.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        var records;
+        var qId=[];
+        function meanStack(evt, formDisp) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(formDisp).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        var myapp = angular.module('homeMongo',[]);
+        myapp.run(function ($http) {
+            // Sends this header with any AJAX request
+            $http.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+            // Send this header only in post requests. Specifies you are sending a JSON object
+            $http.defaults.headers.post['dataType'] = 'json'
+        });
+        myapp.controller('homeController',function($scope,$http){
+            //capturing and inserting data to mongodb by Http Post
+            $scope.insertData = function(){
+                console.log($scope.question);
+                var dataParams = {
+                    'question_id': Math.max.apply(null, qId)+1,
+                    'question'  : $scope.question,
+                    'answer'     :$scope.answer,
+                    'keywords':[{
+                        'id':1,'key':$scope.key1,'score':5},
+                        {
+                            'id':2,'key':$scope.key2,'score':5
+                        }],
+                };
+                var config = {
+                    headers : {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                    }
+                }
+                console.log(dataParams);
+                var req = $http.post('/questions/create',dataParams);
+
+                req.success(function(data, status, headers, config) {
+                    $scope.message = data;
+                    console.log(data);
+                    alert("Details are saved Successfully saved in MongoDB");
+                });
+                req.error(function(data, status, headers, config) {
+                    alert( "failure message: " + JSON.stringify({data: data}));
+                });
+                $scope.init();
+            };
+            //Http get call on initilazation/loading of the page
+            $scope.init = function () {
+                var request=$http.get('/questions/search');
+
+                request.success(function(data, status, headers, config) {
+                    $scope.response = data;
+                    console.log(data);
+                    records = data;
+                    console.log(records.length);
+                    //logic to get unique id for the question_id
+                    if (records.length==0){
+                        var q = records.question_id;
+                        q=0;
+                        qId.push(q);
+                    }else{
+                        for(var i=0; i<records.length; i++){
+                            qId.push(records[i].question_id);
+                        }
+                        console.log(qId);
+                    }
+                });
+                request.error(function(data, status, headers, config) {
+                    alert( "failure message: " + JSON.stringify({data: data}));
+                });
+            }
+            $scope.questData = function(){
+                var query = '/queskeys/search?srch='+$scope.srch;
+                var request=$http.get(query);
+                request.success(function(data, status, headers, config) {
+                    $scope.response = data;
+                    console.log(data);
+                });
+                request.error(function(data, status, headers, config) {
+                    alert( "failure message: " + JSON.stringify({data: data}));
+                });
+            }
+            $scope.DeleteRow=function(){
+                var query = '/question/delete?qid='+this.data.question_id;
+                var request=$http.get(query);
+                request.success(function(data, status, headers, config) {
+                 $scope.init();
+                });
+                request.error(function(data, status, headers, config) {
+                    console.log( "failure message: " + JSON.stringify({data: data}));
+                });
+            }
+            $scope.UpdateData=function()
+            {
+                var query = '/question/delete?qid='+$scope.qid;
+                var request=$http.get(query);
+                request.success(function(data, status, headers, config) {
+                    var dataParams = {
+                        'question_id': Math.max.apply(null, qId),
+                        'question'  : $scope.question1,
+                        'answer'     :$scope.answer1,
+                        'keywords':[{
+                            'id':1,'key':$scope.key11,'score':5},
+                            {
+                                'id':2,'key':$scope.key21,'score':5
+                            }],
+                    };
+                    var config = {
+                        headers : {
+                            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                        }
+                    }
+                    console.log(dataParams);
+                    var req = $http.post('/questions/create',dataParams);
+
+                    req.success(function(data, status, headers, config) {
+                        $scope.message = data;
+                        console.log(data);
+                        alert("Details are saved Successfully saved in MongoDB");
+                    });
+                    req.error(function(data, status, headers, config) {
+                        alert( "failure message: " + JSON.stringify({data: data}));
+                    });
+                    $scope.init();
+                });
+                request.error(function(data, status, headers, config) {
+                    console.log( "failure message: " + JSON.stringify({data: data}));
+                });
+
+
+            }
+            $scope.UpdateRow=function(){
+                console.log('update');
+                $scope.qid=this.data.question_id;
+                $scope.question1=this.data.question;
+                $scope.key11=this.data.keywords[0].key;
+                $scope.key21=this.data.keywords[1].key;
+                $scope.answer1=this.data.answer;
+                document.getElementById('btnupdate').click();
+            }
+            //logout functionality
+            $scope.logout=function() {
+                window.location.href="AdminLogin.html";
+            }
+        });
+    </script>
+</head>
+<body>
+<h1 class="jumbotron" style="text-align: center; background-color: white"><i class="material-icons">question_answer</i>&nbsp;&nbsp;Question and Answers</h1>
+<div class="col-xs-1 align-left" style="float: right">
+    <button class="form-control align-bottom" style="color: white;background-color: black;margin-top: 30px" ng-click="logout()">Logout</button>
+</div>
+<div  class="row">
+    <div class="col-lg-2" style="background-color:lavender;">
+        <div class="tab" >
+            <button class="tablinks" onclick="meanStack(event,'Create')"><i class="material-icons">keyboard_tab</i>&nbsp;&nbsp;Insert a Question </button>
+            <button onclick="meanStack(event,'Fetch')"><i class="fa fa-fw fa-search"></i>&nbsp;&nbsp;Search/Update/Delete</button>
+        </div>
+    </div>
+    <div align="center" id="myModal1" class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         style="height: 60%;width: 50%;background-color: whitesmoke;display: none;margin-left: 25%;margin-top: 8%;padding-left: 17px;">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="container" style="width: 50%; background-color: #151515"
+                  ng-submit="UpdateData()" >
+                <label style="display: none" ng-model="qid"></label>
+                <label for="Question" style="color: white"><b>Question</b></label>
+                <input type="text" name="question"
+                       placeholder="Enter a Question" ng-model="question1" required >
+                <label for="key1" style="color: white"><b>key-1</b></label>
+                <input type="text"  name="key1"
+                       placeholder="Enter a Key" ng-model="key11" required >
+                <label for="key2" style="color: white"><b>key-2</b></label>
+                <input type="text"  name="key2"
+                       placeholder="Enter a Key" ng-model="key21" required >
+                <label for="Answer" style="color: white"><b>Answer</b></label>
+                <input type="text" name="answer"
+                       placeholder="Enter Answer" ng-model="answer1" required >
+                <input type="submit" style="font-face: 'Comic Sans MS'; font-size: larger; color: black; background-color: blue; border: 3pt ridge lightgrey"
+                       value="Submit">
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-10" >
+        <div id="Create" style="width: 100%" align="center" class="tabcontent">
+            <h2>Ask a Question??</h2>
+            <form class="container" style="width: 50%; background-color: #151515"
+                  ng-submit="insertData()" >
+                <label for="Question" style="color: white"><b>Question</b></label>
+                <input type="text" id="question" name="question"
+                       placeholder="Enter a Question" ng-model="question" required >
+                <label for="key1" style="color: white"><b>key-1</b></label>
+                <input type="text" id="key1" name="key1"
+                       placeholder="Enter a Key" ng-model="key1" required >
+                <label for="key2" style="color: white"><b>key-2</b></label>
+                <input type="text" id="key2" name="key2"
+                       placeholder="Enter a Key" ng-model="key2" required >
+                <!--<label for="key3" style="color: white"><b>key-3</b></label>
+                <input type="text" id="key3" name="key3"
+                       placeholder="Enter a Key" ng-model="key3" >
+                <label for="key4" style="color: white"><b>key-4</b></label>
+                <input type="text" id="key4" name="key4"
+                       placeholder="Enter a Key" ng-model="key4" >-->
+                <label for="Answer" style="color: white"><b>Answer</b></label>
+                <input type="text" id="answer" name="answer"
+                       placeholder="Enter Answer" ng-model="answer" required >
+                <input type="submit" style="font-face: 'Comic Sans MS'; font-size: larger; color: black; background-color: blue; border: 3pt ridge lightgrey" value="Submit">
+            </form>
+        </div>
+        <div id="Fetch"  align="center" class="tabcontent">
+            <h2>Search by KeyWord</h2>
+            <label for="srch" style="color: white"><b>Search</b></label>
+            <input type="text" id="srch" name="srch"
+                   placeholder="Enter to Search" ng-model="srch" >
+            <form class="container" style="width: 50%; background-color: #151515"
+                  ng-submit="questData()" >
+                <input type="submit"  style="font-face: 'Comic Sans MS'; font-size: larger; color: black; background-color: blue; border: 3pt ridge lightgrey" value="Search">
+            </form>
+            <p>Question Details for keys {{srch}} are below:</p>
+            <table border="1" align="center" width="50%" cellpadding="4",cellspacing="3">
+                <tr>
+                    <th>Question ID</th>
+                    <th>Question</th>
+                    <th>Answer</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+                <tr align="center" ng-repeat="data in response">
+                    <td>{{data.question_id}}</td>
+                    <td>{{data.question}}</td>
+                    <td>{{data.answer}}</td>
+                    <td><a ng-click="UpdateRow()">update</a>
+                        <button id="btnupdate" style="display: none" type="button" data-toggle="modal" data-target="#myModal1"></button>
+                            </td>
+                    <td><a ng-click="DeleteRow()">delete</a></td>
+                </tr>
+            </table>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

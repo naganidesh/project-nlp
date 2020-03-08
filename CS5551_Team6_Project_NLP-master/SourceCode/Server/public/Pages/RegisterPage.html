@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        .borderless td, .borderless th {
+            border: none !important;
+            padding: 4px !important;
+        }
+        .borderless1 td, .borderless1 th {
+            border: none !important;
+        }
+    </style>
+</head>
+<body ng-app="demoMongo" style="background:url('../Images/HomePic.jpeg');background-size: cover">
+<div class="container-fluid" style="height: 75px">
+    <div class="col-xs-7">
+        <img src="../Images/Logo.gif" class="img-fluid rounded float-left img-responsive" style="height: 130px !important;">
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="col-xs-9"></div>
+    <div style="border: 2px solid midnightblue;border-radius: 25px" ng-controller="MongoRestController" class="col-xs-3">
+        <div class="pull-right">
+            <table class="borderless table">
+                <th class="text-center" colspan="2"><label style="font-size: 25px;color: midnightblue">Sign up</label></th>
+                <tr>
+                    <td><label style="font-size: 16px;color: midnightblue">Name</label></td>
+                    <td><input ng-model="txtName" class="form-control" type="text" required></td>
+                </tr>
+                <tr>
+                    <td><label style="font-size: 16px;color: midnightblue">Username/Email</label></td>
+                    <td><input ng-model="txtUsername" class="form-control"  style="text-transform:lowercase" type="text" required></td>
+                </tr>
+                <tr>
+                    <td><label style="font-size: 16px;color: midnightblue">Password</label></td>
+                    <td><input ng-model="txtPassword" class="form-control" type="password" required></td>
+                </tr>
+                <tr>
+                    <td><label style="font-size: 16px;color: midnightblue">Confirm Password</label></td>
+                    <td><input ng-model="txtConfirmpassword" class="form-control" type="password" required></td>
+                </tr>
+                <tr>
+                    <td><button ng-click="insertData()" style="color: white;background-color:midnightblue;" class="form-control" class="btn" style="width: 100%">
+                        <strong>Signup</strong>
+                    </button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="../Scripts/app.js"></script>
+<script type="text/javascript" src="../Scripts/Signup.js"></script>
+</body>
+</html>

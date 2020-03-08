@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        var app = angular.module('LoginApp', []);
+
+        app.controller('logincontroller',function ($scope,$http){
+            $scope.AppLogin=function() {
+                username = $scope.txtUsername;
+                password = $scope.txtPassword;
+                if(username=="admin" && password=="admin"){
+                    window.location.href="AdminPage.html";
+                }
+                else{
+                    alert("Please check the details");
+                }
+            }
+            $scope.redtoHome=function() {
+                window.location.href="LoginPage.html";
+            }
+        })
+    </script>
+
+    <meta charset="UTF-8">
+    <style>
+        body{
+            background: #b9ecff;
+            background-size: cover;
+            margin:0;
+        }
+        input{
+            width: 70%;
+            outline: none;
+            padding: 10px 11px;
+            border: 1px #aaaaaa;
+            font-size: 15px;
+            background: #ffffff;
+            display : block;
+            margin:20px auto;
+        }
+        #login{
+            background: #19b1ca;
+            color: white;
+            border: none;
+        }
+        div{
+            width:30%;
+            height: 400px;
+            background: rgba(0,0,0,.2);
+            box-shadow: 5px 4px 40px #000;
+            position: absolute;
+            top: 20%;
+            left: 60%;
+        }
+        form{
+            margin:30px auto;
+        }
+        img{
+            display: block;
+            margin: -75px auto 0 auto;
+        }
+
+    </style>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body ng-app="LoginApp" ng-controller="logincontroller">
+
+<div>
+    <form>
+        <img src="../Images/admin.png"/>
+        <input type="text" name="" placeholder="Enter User Name" ng-model="txtUsername" required />
+        <input type="password" name="" placeholder="password"  ng-model="txtPassword"  required />
+        <button  class="form-control" style="color: white;background-color: black" id="login" ng-click="AppLogin()"><strong>Login</strong></button>
+        <button  class="form-control" style="color: white;background-color: red" id="gotoHome" ng-click="redtoHome()"><strong>Redirect to Home Login</strong></button>
+    </form>
+</div>
+
+</body>
+</html>

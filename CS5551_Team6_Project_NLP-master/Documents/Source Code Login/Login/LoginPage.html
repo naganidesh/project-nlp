@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    <script>
+        var app = angular.module('LoginApp', ["ngRoute"]);
+        app.controller('FBcontroller',function ($scope,$http) {
+
+            $scope.FbLogin = function () {
+                FB.login(function(response){
+                        if(response.authResponse) (
+                            FB.api('/me','GET',{fields:'email,first_name,name,id'},function(response){
+                                sessionStorage.FBName=response.name.toString();
+                                window.location.href = "HomePage.html";
+                            })
+                        )
+                    },
+                    {scope:'email',return_scope:true}
+                )
+            }
+            $scope.AppLogin=function(){
+                var status=CheckUser($scope);
+                if(status=="valid"){
+                    window.location.href="HomePage.html";
+                }
+                else if(status=="invalid"){
+                    alert("Password is Incorrect");
+                }
+                else if(status=="nouser"){
+                    alert('User is not registered');
+                }
+                else{
+                    alert(status);
+                }
+            }
+        });
+        app.controller('Signupcontroller',function ($scope,$http){
+            $scope.CreateUser=function() {
+                var Name="";var username="";var password="";var confirmpassword="";
+                Name = $scope.txtName;
+                username = $scope.txtUsername;
+                password = $scope.txtPassword;
+                confirmpassword = $scope.txtConfirmpassword;
+                var Errormessage="";
+                Errormessage= ValidateUserDetails(Name, username, password, confirmpassword);
+                if(Errormessage!=null && Errormessage!=""){
+                    alert(Errormessage)
+                    return;
+                }
+                else{
+                    var array=[];
+                    array=getUserDetails();
+                    if(array.filter(user=>user.username==username).length>0)
+                    {
+                        alert('User already exists with the username. Please try signup with another username');
+                    }
+                    else
+                    {
+                        var details={
+                            name:Name,
+                            username:username,
+                            password:password
+                        };
+                        array.push(details);
+                        localStorage.setItem("UserDetails",JSON.stringify(array));
+                        alert("user created");
+                     }
+                }
+            }
+        })
+    </script>
+    <style type="text/css">
+        .borderless td, .borderless th {
+            border: none !important;
+            padding: 4px !important;
+        }
+        .borderless1 td, .borderless1 th {
+            border: none !important;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body ng-app="demoMongo" style="background:url('../Images/HomePic.jpeg');background-size: cover">
+<div class="container-fluid" style="height: 85px">
+    <div class="col-xs-7">
+        <img src="../Images/Logo.gif" class="img-fluid rounded float-left img-responsive" style="height: 130px !important;">
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="col-xs-8"></div>
+    <div style="border: 2px solid midnightblue;border-radius: 25px" ng-controller="getController" class="col-xs-4">
+        <table class="table text-centered borderless">
+
+            <tr>
+                <td style="font-size: 14px;color: midnightblue"><strong>Username</strong></td>
+                <td><input class="form-control" style="color: whitesmoke;background-color: midnightblue" type="text" ng-model="txtUsername"></td>
+            </tr>
+                <tr>
+                    <td style="font-size: 14px;color: midnightblue"><strong>Password</strong></td>
+                    <td><input  class="form-control" style="color: whitesmoke;background-color: midnightblue" type="password" ng-model="txtPassword"></td>
+                </tr>
+                    <tr>
+                        <td colspan="2"><button  class="form-control" style="color: white;background-color: midnightblue" ng-click="getDbData()"><strong>Login</strong></button></td>
+                    </tr>
+            <tr>
+                <td>
+                    <span style="font-size: 14px;color: midnightblue"><strong>Login Using Facebook</strong></span>
+                    <button data-toggle="tooltip" title="Login with Facebook" style="border: 0;background-color:  transparent;" ng-click="FbLogin()">
+                    <i class="fa fa-facebook-square" style="font-size:35px;color:blue"></i>
+                </button></td>
+                <td style="vertical-align: bottom">
+                    <span style="font-size: 14px;color: black"><strong>New User?</strong></span>
+                    <a href="RegisterPage.html"><span style="font-size: 14px;color: midnightblue"><strong>SignUp</strong></span></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script type="text/javascript" src="../Scripts/app.js"></script>
+<script type="text/javascript" src="../Scripts/Login.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
